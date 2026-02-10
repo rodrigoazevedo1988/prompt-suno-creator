@@ -67,6 +67,87 @@ function clean(s) {
 }
 
 /**
+ * Validate Lyrics content to prevent Suno from singing descriptions
+ * @param {string} lyrics - Lyrics content to validate
+ * @returns {object} - Object with isValid flag and warnings array
+ */
+function validateLyrics(lyrics) {
+  const warnings = [];
+  let isValid = true;
+
+  if (!lyrics || lyrics.trim() === "") {
+    return { isValid: true, warnings: [] };
+  }
+
+  // Words that should NOT appear in Lyrics outside of metatags
+  const forbiddenWords = [
+    "violão", "sanfona", "clima", "arranjo", "instrumental", 
+    "guitarra", "piano", "bateria", "baixo", "sintetizador",
+    "synth", "drums", "bass", "acoustic", "electric",
+    "melody", "harmony", "rhythm", "beat", "tempo",
+    "atmosphere", "vibe", "mood", "energy", "dynamics",
+    "intro", "outro", "bridge", "pre-chorus", "refrão",
+    "verse", "chorus", "hook", "solo", "drop"
+  ];
+
+  // Check for forbidden words outside of metatags
+  const lines = lyrics.split('\n');
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i].trim();
+    
+    // Skip empty lines and metatags
+    if (!line || line.startsWith('[') && line.endsWith(']')) {
+      continue;
+    }
+
+    // Check for forbidden words
+    for (const word of forbiddenWords) {
+      if (line.toLowerCase().includes(word)) {
+        warnings.push(`⚠️ Linha ${i + 1}: "${word}" não deveria estar no Lyrics. Isso vai para o STYLE.`);
+        isValid = false;
+      }
+    }
+
+    // Check for long descriptive phrases (more than 3 words that look like descriptions)
+    const words = line.split(/\s+/);
+    if (words.length > 3 && !line.includes('"') && !line.includes("'")) {
+      // Check if it looks like a description (contains adjectives/adverbs)
+      const descriptiveWords = ["marcando", "entrando", "sorrindo", "animado", "disfarçada", "suave", "forte", "rápido", "lento"];
+      for (const desc of descriptiveWords) {
+        if (line.toLowerCase().includes(desc)) {
+          warnings.push(`⚠️ Linha ${i + 1}: Isso parece descrição musical, não letra. Vai para o STYLE.`);
+          isValid = false;
+          break;
+        }
+      }
+    }
+  }
+
+  // Check for content inside [Instrumental] tag
+  let inInstrumental = false;
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i].trim();
+    
+    if (line === "[Instrumental]") {
+      inInstrumental = true;
+      continue;
+    }
+    
+    if (inInstrumental && line && !line.startsWith('[')) {
+      warnings.push(`⚠️ Linha ${i + 1}: [Instrumental] deve estar vazio. Apenas "[Instrumental]" sem texto.`);
+      isValid = false;
+      inInstrumental = false;
+    }
+    
+    if (line.startsWith('[') && line.endsWith(']') && line !== "[Instrumental]") {
+      inInstrumental = false;
+    }
+  }
+
+  return { isValid, warnings };
+}
+
+/**
  * Generate a "similar but not equal" artist name
  * This creates a name inspired by the original but legally distinct
  * @param {string} name - Original artist name
@@ -249,7 +330,7 @@ function collect() {
 /**
  * Build the final prompt string from collected data
  * @param {object} data - Form data object
- * @returns {object} - Object containing prompt and missing fields
+ * @returns {object} - Object containing prompt, missing fields, and validation warnings
  */
 function buildPrompt(data) {
   const missing = [];
@@ -287,6 +368,28 @@ function buildPrompt(data) {
   const mustLine = data.obrigatorios ? `Obrigatórios: ${data.obrigatorios}.` : `Obrigatórios: (nenhum).`;
   const avoidLine = data.evitar ? `Evitar: ${data.evitar}.` : `Evitar: (nenhum).`;
   const extrasLine = data.extras ? `Extras: ${data.extras}.` : `Extras: (nenhum).`;
+
+  // Validate lyrics if provided
+  let validationWarnings = [];
+  let lyricsValidationSection = "";
+  if (data.letra_pronta) {
+    const validation = validateLyrics(data.letra_pronta);
+    validationWarnings = validation.warnings;
+    
+    if (validationWarnings.length > 0) {
+      lyricsValidationSection = `
+⚠️ ALERTAS DE VALIDAÇÃO DA LETRA DO USUÁRIO:
+${validationWarnings.join('\n')}
+
+🚨 IMPORTANTE: O Suno canta TUDO que estiver como texto normal no Lyrics.
+- Direções musicais (instrumentos, clima, arranjo) devem ir no STYLE
+- No Lyrics, coloque APENAS o que pode ser cantado
+- [Instrumental] deve estar vazio, apenas a metatag
+
+Se quiser corrigir, ajuste a letra antes de gerar o prompt final.
+`;
+    }
+  }
 
   const prompt =
 `Você é um especialista em composições para Suno AI.
@@ -328,7 +431,7 @@ ${data.letra_pronta ? `\nLETRA DO USUÁRIO:\n${data.letra_pronta}\n` : ""}
 
 Agora gere a composição completa e entregue STYLE + LYRICS prontos.`;
 
-  return { prompt, missing };
+  return { prompt, missing, validationWarnings };
 }
 
 /**
@@ -388,10 +491,12 @@ $("gen").addEventListener("click", () => {
   setLoading(true);
   setTimeout(() => {
     const data = collect();
-    const { prompt, missing } = buildPrompt(data);
+    const { prompt, missing, validationWarnings } = buildPrompt(data);
 
     if (missing.length) {
       $("status").textContent = `Faltando: ${missing.join(", ")} (recomendado preencher). Mesmo assim gerei.`;
+    } else if (validationWarnings.length > 0) {
+      $("status").textContent = `⚠️ ${validationWarnings.length} alerta(s) de validação na letra. Verifique abaixo.`;
     } else {
       $("status").textContent = "Pronto. Agora copie e cole aqui no chat.";
     }

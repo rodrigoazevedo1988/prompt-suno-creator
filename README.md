@@ -45,7 +45,7 @@ O **Prompt Suno Creator** é um formulário interativo que coleta informações 
 | **Técnico** | Andamento/energia, Atmosfera sonora, Instrumentos, BPM |
 | **Estrutura** | Seções desejadas, Tipo de refrão, Hook, Solo |
 | **Requisitos** | Obrigatórios, Evitar, Extras |
-| **Letra** | Letra pronta (opcional) |
+| **Letra** | Letra pronta (opcional) com validação automática |
 | **Otimização** | Nível de otimização do Style |
 
 ## 🎯 Formato Otimizado para Suno AI
@@ -71,6 +71,108 @@ bachata, sertanejo, male vocal, solo, joyful, heartbreak, bar vibe, melodic, cat
 
 ```
 {genre_1}, {genre_2}, {subgenre_optional}, {voice_type}, {formation}, {main_emotion}, {secondary_emotion}, {vibe}, melodic, catchy hooks, {main_instruments}, {secondary_instruments_optional}, {tempo}, ~{bpm} BPM, style similar to "{artist_like_name}"
+```
+
+## 🚨 Regra Absoluta do Suno - Lyrics
+
+### 🎯 O Que NÃO Fazer no Lyrics
+
+O Suno canta **TUDO** que estiver como texto normal no Lyrics. Ele não entende "descrição poética" como direção implícita.
+
+❌ **Nunca escreva descrições soltas em texto**
+
+❌ **Nunca use frases explicativas fora de tags**
+
+❌ **Exemplo INCORRETO** (o Suno vai cantar tudo):
+```
+[Intro]
+[Instrumental]
+Violão marcando bachata
+Sanfona entra sorrindo
+Clima animado, dor disfarçada
+```
+
+### ✅ O Que Fazer no Lyrics
+
+✅ **Instrumental SEM texto = instrumental**
+
+✅ **Direção musical → Style, não Lyrics**
+
+✅ **Se quiser indicar instrumental, use apenas a metatag**
+
+✅ **Exemplo CORRETO** (100% seguro):
+```
+[Intro]
+[Instrumental]
+```
+
+👉 **Nada mais.** O arranjo já vem do STYLE.
+
+### 🎯 Onde Colocar as Informações Musicais?
+
+Tudo que descreve como a música sova vai para o **STYLE**:
+
+**❌ No Lyrics (não coloque aqui):**
+- Violão marcando bachata
+- Sanfona entra sorrindo
+- Clima animado, dor disfarçada
+
+**✅ No Style (coloque aqui):**
+```
+sertanejo, bachata, male vocal, solo, joyful heartbreak, upbeat, bar vibe, melodic, acoustic guitar groove, accordion lead, medium tempo, 125 BPM, style similar to "Gustavo Lim Nova"
+```
+
+### 🧠 Regra Mental Simples
+
+**Lyrics = só o que pode ser cantado**
+
+**Style = tudo que descreve como a música soa**
+
+Se você ler a linha e pensar:
+🗣️ *"isso não faz sentido alguém cantar"*
+➡️ **não entra no Lyrics.**
+
+### 🔧 Sistema de Validação Automática
+
+O Prompt Suno Creator possui um sistema de validação automática que:
+
+**❌ Bloqueia palavras como:**
+- violão, sanfona, clima, arranjo, instrumental
+- guitarra, piano, bateria, baixo, sintetizador
+- melody, harmony, rhythm, beat, tempo
+- atmosphere, vibe, mood, energy, dynamics
+
+**❌ Bloqueia frases longas dentro de [Instrumental]**
+
+**✅ Permite apenas:**
+```
+[Intro]
+[Instrumental]
+```
+
+Quando você colar uma letra no campo "Letra pronta", o sistema automaticamente:
+1. Analisa cada linha da letra
+2. Detecta palavras que não deveriam estar no Lyrics
+3. Exibe avisos específicos com número da linha
+4. Sugere mover essas informações para o STYLE
+
+### 📋 Exemplo de Validação
+
+Se você colar uma letra com descrições musicais, o sistema mostrará:
+
+```
+⚠️ ALERTAS DE VALIDAÇÃO DA LETRA DO USUÁRIO:
+⚠️ Linha 3: "violão" não deveria estar no Lyrics. Isso vai para o STYLE.
+⚠️ Linha 4: "sanfona" não deveria estar no Lyrics. Isso vai para o STYLE.
+⚠️ Linha 5: "clima" não deveria estar no Lyrics. Isso vai para o STYLE.
+⚠️ Linha 7: Isso parece descrição musical, não letra. Vai para o STYLE.
+
+🚨 IMPORTANTE: O Suno canta TUDO que estiver como texto normal no Lyrics.
+- Direções musicais (instrumentos, clima, arranjo) devem ir no STYLE
+- No Lyrics, coloque APENAS o que pode ser cantado
+- [Instrumental] deve estar vazio, apenas a metatag
+
+Se quiser corrigir, ajuste a letra antes de gerar o prompt final.
 ```
 
 ## 🛠️ Instalação e Uso
@@ -196,9 +298,13 @@ Agora gere a composição completa e entregue STYLE + LYRICS prontos.
 4. **BPM como sugestão**: Funciona como diretriz para o Suno
 5. **Teste variações**: Gere múltiplos prompts para A/B testing
 6. **Seja específico nos instrumentos**: Listar principais e secundários
+7. **Valide a letra**: Use o sistema de validação para evitar que o Suno cante descrições
+8. **Lyrics = só o que pode ser cantado**: Direções musicais vão no Style
+9. **[Instrumental] deve estar vazio**: Apenas a metatag, sem texto adicional
 
 ## 🚀 Próximos Passos Sugeridos
 
+- [x] Adicionar validação automática de Lyrics para evitar que o Suno cante descrições
 - [ ] Adicionar presets de gêneros musicais (bachata, sertanejo, funk, trap, etc.)
 - [ ] Implementar validação automática de style longo
 - [ ] Adicionar sistema de favoritos para prompts
@@ -222,13 +328,13 @@ Contribuições são bem-vindas! Sinta-se à vontade para:
 
 ### Melhorias Futuras Planejadas
 
+- [x] Adicionar validação automática de Lyrics para evitar que o Suno cante descrições
 - [ ] Adicionar temas de cores alternativos
 - [ ] Implementar salvamento local (localStorage)
 - [ ] Adicionar templates de gêneros musicais
 - [ ] Criar versão em inglês/espanhol
 - [ ] Adicionar pré-visualização de áudio (quando disponível)
 - [ ] Implementar exportação direta para Suno API
-- [ ] Adicionar validação mais robusta
 - [ ] Criar versão PWA (Progressive Web App)
 - [ ] Adicionar histórico de prompts gerados
 - [ ] Implementar compartilhamento de prompts
