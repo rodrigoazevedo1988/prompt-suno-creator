@@ -398,6 +398,7 @@ TAREFA:
 1) Crie a CANÇÃO completa (letra + orientação de melodia/arranjo).
 2) Entregue um PROMPT FINAL para eu colar no Suno (campo Style + campo Lyrics), bem formatado.
 3) Garanta coerência entre tema, emoção, estrutura e estética.
+4) Crie um TÍTULO criativo e memorável para a música, alinhado com o tema e emoção.
 
 BRIEF (respostas do usuário):
 - Idioma: ${langHuman}
@@ -420,16 +421,17 @@ BRIEF (respostas do usuário):
 
 REGRAS DE SAÍDA:
 - ${metatagsLine}
-- O resultado deve vir em 2 blocos:
-  A) STYLE (formato otimizado para Suno - curto, denso, em inglês): ${style}
-  B) LYRICS (letra final pronta para cantar, seguindo a estrutura, com toda a narrativa e emoção).
+- O resultado deve vir em 3 blocos:
+  A) TÍTULO (título criativo e memorável para a música, alinhado com o tema e emoção)
+  B) STYLE (formato otimizado para Suno - curto, denso, em inglês): ${style}
+  C) LYRICS (letra final pronta para cantar, seguindo a estrutura, com toda a narrativa e emoção).
 - Se o usuário deixou letra pronta, use-a. Se não, crie.
 - Não cite o nome do artista real diretamente no prompt final; use apenas a "referência similar" ou descrições.
 
 ${lyricsInstr}
 ${data.letra_pronta ? `\nLETRA DO USUÁRIO:\n${data.letra_pronta}\n` : ""}
 
-Agora gere a composição completa e entregue STYLE + LYRICS prontos.`;
+Agora gere a composição completa e entregue TÍTULO + STYLE + LYRICS prontos.`;
 
   return { prompt, missing, validationWarnings };
 }
@@ -498,6 +500,23 @@ $("gen").addEventListener("click", () => {
     } else if (validationWarnings.length > 0) {
       $("status").textContent = `⚠️ ${validationWarnings.length} alerta(s) de validação na letra. Verifique abaixo.`;
     } else {
+      // Add option to copy all content with one click
+      const copyAllButton = document.createElement("button");
+      copyAllButton.className = "btn secondary";
+      copyAllButton.textContent = "Copiar Tudo";
+      copyAllButton.style.marginTop = "10px";
+      copyAllButton.style.display = "block";
+      copyAllButton.style.width = "100%";
+      
+      copyAllButton.addEventListener("click", () => {
+        const allContent = prompt;
+        navigator.clipboard.writeText(allContent).then(() => {
+          showToast("Tudo copiado ✅");
+        });
+      });
+      
+      const outContainer = document.getElementById("out");
+      outContainer.appendChild(copyAllButton);
       $("status").textContent = "Pronto. Agora copie e cole aqui no chat.";
     }
     setOut(prompt);

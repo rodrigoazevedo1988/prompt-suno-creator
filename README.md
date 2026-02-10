@@ -255,6 +255,7 @@ TAREFA:
 1) Crie a CANÇÃO completa (letra + orientação de melodia/arranjo).
 2) Entregue um PROMPT FINAL para eu colar no Suno (campo Style + campo Lyrics), bem formatado.
 3) Garanta coerência entre tema, emoção, estrutura e estética.
+4) Crie um TÍTULO criativo e memorável para a música, alinhado com o tema e emoção.
 
 BRIEF (respostas do usuário):
 - Idioma: Português (Brasil)
@@ -277,15 +278,16 @@ BRIEF (respostas do usuário):
 
 REGRAS DE SAÍDA:
 - Use metatags no formato [Intro], [Verse], [Pre-Chorus], [Chorus], [Bridge], [Outro] (conforme fizer sentido).
-- O resultado deve vir em 2 blocos:
-  A) STYLE (formato otimizado para Suno - curto, denso, em inglês): pop, female vocal, solo, nostalgic, melancholic, intimate, melodic, catchy hooks, piano, synth, pads, slow tempo, ~90 BPM, style similar to "Billie Eilish Nova"
-  B) LYRICS (letra final pronta para cantar, seguindo a estrutura, com toda a narrativa e emoção).
+- O resultado deve vir em 3 blocos:
+  A) TÍTULO (título criativo e memorável para a música, alinhado com o tema e emoção)
+  B) STYLE (formato otimizado para Suno - curto, denso, em inglês): pop, female vocal, solo, nostalgic, melancholic, intimate, melodic, catchy hooks, piano, synth, pads, slow tempo, ~90 BPM, style similar to "Billie Eilish Nova"
+  C) LYRICS (letra final pronta para cantar, seguindo a estrutura, com toda a narrativa e emoção).
 - Se o usuário deixou letra pronta, use-a. Se não, crie.
 - Não cite o nome do artista real diretamente no prompt final; use apenas a "referência similar" ou descrições.
 
 LETRA: O usuário NÃO forneceu letra. Crie uma letra ORIGINAL completa, coerente e cantável, alinhada ao tema, emoção e estrutura.
 
-Agora gere a composição completa e entregue STYLE + LYRICS prontos.
+Agora gere a composição completa e entregue TÍTULO + STYLE + LYRICS prontos.
 ```
 
 ## 🎯 Melhores Práticas Recomendadas
