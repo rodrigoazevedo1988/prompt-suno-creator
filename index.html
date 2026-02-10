@@ -1,0 +1,198 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Coletor de Brief — Compositor Suno (Sr. Gato)</title>
+  <meta name="description" content="Ferramenta para criar prompts detalhados para o Suno AI - gerador de músicas com IA" />
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body>
+  <header>
+    <div>
+      <h1>🎛️ Coletor de Brief — "me manda isso e eu crio a música"</h1>
+      <div class="hint">Preenche → Gera o PROMPT FINAL → Você cola aqui no chat e eu faço a composição completa.</div>
+    </div>
+    <div class="tag">Sr. Gato / gatinho • Suno + letra + metatags</div>
+  </header>
+
+  <main>
+    <section class="card">
+      <div class="hd"><h2>1) Responda as perguntas</h2><span class="tag">Formulário</span></div>
+      <div class="bd">
+        <div class="grid">
+          <div>
+            <label for="lang">Idioma da música</label>
+            <select id="lang">
+              <option value="pt-BR">Português (Brasil)</option>
+              <option value="pt-PT">Português (Portugal)</option>
+              <option value="en">Inglês</option>
+              <option value="es">Espanhol</option>
+              <option value="mix">Misto (PT + EN)</option>
+              <option value="other">Outro</option>
+            </select>
+          </div>
+          <div>
+            <label for="genre">Gênero musical (obrigatório)</label>
+            <input id="genre" placeholder="Ex: Pop, Trap, Rock, MPB, Funk, Eletrônico..." />
+          </div>
+
+          <div>
+            <label for="style">Estilo / vibe (bem específico)</label>
+            <input id="style" placeholder="Ex: pop melancólico minimalista, trap romântico com refrão hino..." />
+          </div>
+          <div>
+            <label for="ref">Referência artística (vou gerar um "parecido, não igual")</label>
+            <input id="ref" placeholder="Ex: Anitta, The Weeknd, Billie Eilish..." />
+          </div>
+
+          <div>
+            <label for="voiceType">Tipo de voz</label>
+            <select id="voiceType">
+              <option>Feminina</option>
+              <option>Masculina</option>
+              <option>Mista</option>
+              <option>Instrumental (sem voz)</option>
+            </select>
+          </div>
+          <div>
+            <label for="formation">Formação vocal</label>
+            <select id="formation">
+              <option>Solo</option>
+              <option>Dueto</option>
+              <option>Solo + Backing vocals</option>
+              <option>Coro</option>
+            </select>
+          </div>
+
+          <div>
+            <label for="emotionMain">Emoção principal</label>
+            <input id="emotionMain" placeholder="Ex: nostalgia, raiva, esperança, paixão..." />
+          </div>
+          <div>
+            <label for="emotionSide">Emoções secundárias</label>
+            <input id="emotionSide" placeholder="Ex: saudade, alívio, ironia..." />
+          </div>
+
+          <div>
+            <label for="theme">Tema central da letra</label>
+            <input id="theme" placeholder="Ex: superação, amor urbano, ciúme, liberdade, crítica social..." />
+          </div>
+          <div>
+            <label for="pov">Ponto de vista (narrativa)</label>
+            <select id="pov">
+              <option>1ª pessoa (eu)</option>
+              <option>2ª pessoa (você)</option>
+              <option>3ª pessoa (ele/ela)</option>
+              <option>Misto</option>
+            </select>
+          </div>
+
+          <div>
+            <label for="tempo">Andamento / energia</label>
+            <select id="tempo">
+              <option>Lento</option>
+              <option>Médio</option>
+              <option>Rápido</option>
+              <option>Não sei / tanto faz</option>
+            </select>
+          </div>
+          <div>
+            <label for="mood">Clima / atmosfera sonora</label>
+            <input id="mood" placeholder="Ex: noturna, íntima, cinematográfica, agressiva, solar..." />
+          </div>
+
+          <div>
+            <label for="instMain">Instrumentos principais</label>
+            <input id="instMain" placeholder="Ex: violão, piano, synth, guitarra, 808..." />
+          </div>
+          <div>
+            <label for="instSide">Instrumentos secundários</label>
+            <input id="instSide" placeholder="Ex: pads, cordas, percussão leve, FX, backings..." />
+          </div>
+        </div>
+
+        <div class="sep"></div>
+
+        <div class="grid">
+          <div>
+            <label for="structure">Estrutura (seções) — do jeito que você quer</label>
+            <input id="structure" value="Intro, Verse 1, Pre-Chorus, Chorus, Verse 2, Chorus, Bridge, Final Chorus, Outro" />
+            <div class="hint">Você pode escrever como quiser: "Intro, Verso, Refrão, Ponte..."</div>
+          </div>
+          <div>
+            <label for="chorusType">Refrão: como deve bater?</label>
+            <select id="chorusType">
+              <option>Explosivo</option>
+              <option>Contido / íntimo</option>
+              <option>Hino (chiclete e grande)</option>
+              <option>Não sei</option>
+            </select>
+          </div>
+
+          <div>
+            <label for="hook">Hook (frase central do refrão) — opcional</label>
+            <input id="hook" placeholder='Ex: "Eu volto pra me perder em você"' />
+          </div>
+          <div>
+            <label for="solo">Solo instrumental (opcional)</label>
+            <input id="solo" placeholder="Ex: Guitar Solo, Piano Solo, Sax Solo..." />
+          </div>
+
+          <div>
+            <label for="must">Obrigatórios (o que NÃO pode faltar)</label>
+            <textarea id="must" placeholder="Ex: coro etéreo no refrão, drop no pós-refrão, métrica curta, etc."></textarea>
+          </div>
+          <div>
+            <label for="avoid">Evitar (o que você NÃO quer)</label>
+            <textarea id="avoid" placeholder="Ex: voz aguda demais, letra explícita, bateria pesada, etc."></textarea>
+          </div>
+
+          <div>
+            <label for="extras">Detalhes extras (qualquer coisa importante)</label>
+            <textarea id="extras" placeholder="Ex: dueto homem/mulher, ad-libs no final, mudança de tom, etc."></textarea>
+          </div>
+          <div>
+            <label for="lyrics">Letra pronta? (se já tiver, cole aqui — opcional)</label>
+            <textarea id="lyrics" placeholder="Se você já tem letra, cole. Se não, deixe vazio que EU vou escrever."></textarea>
+          </div>
+        </div>
+
+        <div class="sep"></div>
+
+        <div class="checkline">
+          <input type="checkbox" id="wantMetatags" checked />
+          <div>
+            <div style="font-weight: 900">Quero que você use metatags no Suno (ex: [Intro], [Verse], [Chorus])</div>
+            <div class="hint">Se desmarcar, eu faço sem tags explícitas.</div>
+          </div>
+        </div>
+
+        <div style="height: 12px"></div>
+
+        <div class="row">
+          <button class="btn" id="gen" type="button">Gerar PROMPT FINAL (pra me enviar)</button>
+          <button class="btn secondary" id="copy" type="button">Copiar</button>
+          <button class="btn secondary" id="dlTxt" type="button">Baixar .txt</button>
+          <button class="btn secondary" id="dlJson" type="button">Baixar .json</button>
+          <button class="btn danger" id="reset" type="button">Limpar</button>
+          <span class="hint" id="status"></span>
+        </div>
+      </div>
+    </section>
+
+    <aside class="card">
+      <div class="hd"><h2>2) PROMPT FINAL (cole no chat)</h2><span class="tag">Saída</span></div>
+      <div class="bd">
+        <div class="hint">Isso aqui é o que você vai me mandar. Eu vou usar exatamente pra compor (letra + prompt Suno + tags).</div>
+        <div style="height: 10px"></div>
+        <div class="out mono" id="out" role="region" aria-live="polite"></div>
+      </div>
+    </aside>
+  </main>
+
+  <div class="toast" id="toast" role="alert" aria-live="assertive">Copiado ✅</div>
+
+  <script src="js/app.js" defer></script>
+</body>
+</html>
