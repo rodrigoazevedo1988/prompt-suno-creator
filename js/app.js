@@ -8,6 +8,56 @@ const $ = (id) => document.getElementById(id);
 const toast = $("toast");
 
 /**
+ * Generate animated background particles
+ */
+function generateParticles() {
+  const particlesContainer = document.getElementById('particles');
+  const particleCount = 20;
+  
+  for (let i = 0; i < particleCount; i++) {
+    const particle = document.createElement('div');
+    particle.className = 'particle';
+    
+    // Random size between 10px and 50px
+    const size = Math.random() * 40 + 10;
+    particle.style.width = `${size}px`;
+    particle.style.height = `${size}px`;
+    
+    // Random position
+    particle.style.left = `${Math.random() * 100}%`;
+    particle.style.top = `${Math.random() * 100}%`;
+    
+    // Random animation delay
+    particle.style.animationDelay = `${Math.random() * 15}s`;
+    
+    // Random animation duration
+    particle.style.animationDuration = `${15 + Math.random() * 10}s`;
+    
+    particlesContainer.appendChild(particle);
+  }
+}
+
+/**
+ * Handle language selection change
+ */
+function handleLanguageChange() {
+  const langSelect = $("lang");
+  const otherLanguageInput = $("otherLanguage");
+  const otherLanguageLabel = $("otherLanguageLabel");
+  
+  langSelect.addEventListener("change", function() {
+    if (this.value === "other") {
+      otherLanguageInput.style.display = "block";
+      otherLanguageLabel.style.display = "block";
+      otherLanguageInput.focus();
+    } else {
+      otherLanguageInput.style.display = "none";
+      otherLanguageLabel.style.display = "none";
+    }
+  });
+}
+
+/**
  * Clean and normalize string input
  * @param {string} s - Input string
  * @returns {string} - Cleaned string
@@ -51,6 +101,7 @@ function similarArtist(name) {
 function collect() {
   const data = {
     idioma: $("lang").value,
+    idioma_especifico: clean($("otherLanguage").value),
     genero: clean($("genre").value),
     estilo: clean($("style").value),
     referencia: clean($("ref").value),
@@ -76,6 +127,11 @@ function collect() {
     usar_metatags: $("wantMetatags").checked
   };
   
+  // Handle language selection
+  if (data.idioma === "other") {
+    data.idioma = data.idioma_especifico || "Outro";
+  }
+  
   data.referencia_similar = data.referencia ? similarArtist(data.referencia) : "";
   return data;
 }
@@ -96,7 +152,7 @@ function buildPrompt(data) {
       case "en": return "Inglês";
       case "es": return "Espanhol";
       case "mix": return "Misto (PT + EN)";
-      default: return "Outro";
+      default: return data.idioma;
     }
   })();
 
@@ -197,19 +253,38 @@ function setOut(text) {
   $("out").textContent = text || "";
 }
 
+/**
+ * Show loading state
+ * @param {boolean} isLoading - Whether to show loading
+ */
+function setLoading(isLoading) {
+  const genButton = $("gen");
+  if (isLoading) {
+    genButton.innerHTML = '<span class="loading"></span> Gerando...';
+    genButton.disabled = true;
+  } else {
+    genButton.innerHTML = 'Gerar PROMPT FINAL (pra me enviar)';
+    genButton.disabled = false;
+  }
+}
+
 // Event Listeners
 
 // Generate prompt button
 $("gen").addEventListener("click", () => {
-  const data = collect();
-  const { prompt, missing } = buildPrompt(data);
+  setLoading(true);
+  setTimeout(() => {
+    const data = collect();
+    const { prompt, missing } = buildPrompt(data);
 
-  if (missing.length) {
-    $("status").textContent = `Faltando: ${missing.join(", ")} (recomendado preencher). Mesmo assim gerei.`;
-  } else {
-    $("status").textContent = "Pronto. Agora copie e cole aqui no chat.";
-  }
-  setOut(prompt);
+    if (missing.length) {
+      $("status").textContent = `Faltando: ${missing.join(", ")} (recomendado preencher). Mesmo assim gerei.`;
+    } else {
+      $("status").textContent = "Pronto. Agora copie e cole aqui no chat.";
+    }
+    setOut(prompt);
+    setLoading(false);
+  }, 500); // Simulate loading time
 });
 
 // Copy to clipboard button
@@ -262,5 +337,11 @@ $("reset").addEventListener("click", () => {
   setOut("");
 });
 
-// Initialize with default message
-setOut("Clique em \"Gerar PROMPT FINAL (pra me enviar)\" depois de preencher o formulário.");
+// Initialize
+document.addEventListener("DOMContentLoaded", () => {
+  generateParticles();
+  handleLanguageChange();
+  
+  // Initialize with default message
+  setOut("Clique em \"Gerar PROMPT FINAL (pra me enviar)\" depois de preencher o formulário.");
+});
