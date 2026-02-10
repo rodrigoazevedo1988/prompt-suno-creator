@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Coletor de Brief — Compositor Suno (Sr. Gato)</title>
-  <meta name="description" content="Ferramenta para criar prompts detalhados para o Suno AI - gerador de músicas com IA" />
+  <meta name="description" content="Ferramenta para criar prompts otimizados para Suno AI - gerador de músicas com IA" />
   <link rel="stylesheet" href="css/styles.css" />
 </head>
 <body>
@@ -114,6 +114,19 @@
             <div>
               <label for="instSide">Instrumentos secundários</label>
               <input id="instSide" placeholder="Ex: pads, cordas, percussão leve, FX, backings..." />
+            </div>
+
+            <div>
+              <label for="bpm">BPM (batidas por minuto)</label>
+              <input id="bpm" type="number" min="60" max="200" placeholder="Ex: 130" />
+            </div>
+            <div>
+              <label for="styleOptimization">Otimização de Style</label>
+              <select id="styleOptimization">
+                <option value="optimized">Otimizado para Suno (recomendado)</option>
+                <option value="detailed">Detalhado (mais descrição)</option>
+                <option value="minimal">Mínimo (somente gênero)</option>
+              </select>
             </div>
           </div>
 

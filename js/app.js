@@ -1,6 +1,6 @@
 /**
  * Prompt Suno Creator - Application Logic
- * A form-based tool for generating music prompts for Suno AI
+ * A form-based tool for generating optimized music prompts for Suno AI
  */
 
 // DOM element selector helper
@@ -95,6 +95,114 @@ function similarArtist(name) {
 }
 
 /**
+ * Generate optimized Suno style format
+ * @param {object} data - Form data
+ * @returns {string} - Optimized style string
+ */
+function generateOptimizedStyle(data) {
+  const styleOptimization = $("styleOptimization").value;
+  const bpm = clean($("bpm").value) || "~130";
+  
+  // Convert Portuguese terms to English for better Suno performance
+  const emotionMap = {
+    "nostalgia": "nostalgic",
+    "raiva": "angry",
+    "esperança": "hopeful",
+    "paixão": "passionate",
+    "saudade": "melancholic",
+    "alívio": "relieved",
+    "ironia": "ironic",
+    "superacao": "uplifting",
+    "amor urbano": "urban love",
+    "ciúme": "jealous",
+    "liberdade": "free",
+    "crítica social": "social critique",
+    "noturna": "nocturnal",
+    "íntima": "intimate",
+    "cinematográfica": "cinematic",
+    "agressiva": "aggressive",
+    "solar": "sunny"
+  };
+  
+  // Convert genre to English
+  const genreMap = {
+    "pop": "pop",
+    "trap": "trap",
+    "rock": "rock",
+    "mpb": "mpb",
+    "funk": "funk",
+    "eletrônico": "electronic",
+    "sertanejo": "sertanejo",
+    "bachata": "bachata",
+    "latino": "latin",
+    "arroz": "arroz"
+  };
+  
+  // Convert voice type
+  const voiceMap = {
+    "Feminina": "female",
+    "Masculina": "male",
+    "Mista": "mixed",
+    "Instrumental (sem voz)": "instrumental"
+  };
+  
+  // Convert formation
+  const formationMap = {
+    "Solo": "solo",
+    "Dueto": "duet",
+    "Solo + Backing vocals": "solo with backing vocals",
+    "Coro": "chorus"
+  };
+  
+  // Convert tempo
+  const tempoMap = {
+    "Lento": "slow",
+    "Médio": "medium",
+    "Rápido": "fast",
+    "Não sei / tanto faz": "medium"
+  };
+  
+  // Generate base style components
+  const genres = data.genero.split(',').map(g => genreMap[clean(g).toLowerCase()] || clean(g)).filter(g => g).join(', ');
+  const voice = voiceMap[data.voz_tipo] || data.voz_tipo.toLowerCase();
+  const formation = formationMap[data.voz_formacao] || data.voz_formacao.toLowerCase();
+  const tempo = tempoMap[data.andamento] || data.andamento.toLowerCase();
+  
+  // Process emotions
+  let emotions = [];
+  if (data.emocao_principal) {
+    emotions.push(emotionMap[data.emocao_principal.toLowerCase()] || data.emocao_principal);
+  }
+  if (data.emocao_secundaria) {
+    emotions.push(emotionMap[data.emocao_secundaria.toLowerCase()] || data.emocao_secundaria);
+  }
+  
+  // Process instruments
+  const instruments = [];
+  if (data.instrumentos_principais) {
+    instruments.push(...data.instrumentos_principais.split(',').map(i => clean(i)));
+  }
+  if (data.instrumentos_secundarios) {
+    instruments.push(...data.instrumentos_secundarios.split(',').map(i => clean(i)));
+  }
+  
+  // Generate style based on optimization level
+  let style;
+  if (styleOptimization === "optimized") {
+    // Optimized style - short, dense, English-based
+    style = `${genres}, ${voice} vocal, ${formation}, ${emotions.join(', ') || 'melodic'}, ${data.atmosfera || 'vibe'}, melodic, catchy hooks, ${instruments.join(', ') || 'standard instruments'}, ${tempo} tempo, ${bpm} BPM, style similar to "${data.referencia_similar || 'artist'}"`;
+  } else if (styleOptimization === "detailed") {
+    // Detailed style - more descriptive
+    style = `${genres}, ${voice} vocal, ${formation}, ${emotions.join(', ') || 'melodic'}, ${data.atmosfera || 'vibe'}, ${data.estilo || 'style'}, melodic, catchy hooks, ${instruments.join(', ') || 'standard instruments'}, ${tempo} tempo, ${bpm} BPM, style similar to "${data.referencia_similar || 'artist'}"`;
+  } else {
+    // Minimal style - only genre
+    style = `${genres}, ${voice} vocal, ${tempo} tempo, ${bpm} BPM, style similar to "${data.referencia_similar || 'artist'}"`;
+  }
+  
+  return style;
+}
+
+/**
  * Collect all form data into a structured object
  * @returns {object} - Form data object
  */
@@ -124,7 +232,9 @@ function collect() {
     evitar: clean($("avoid").value),
     extras: clean($("extras").value),
     letra_pronta: $("lyrics").value.trim(),
-    usar_metatags: $("wantMetatags").checked
+    usar_metatags: $("wantMetatags").checked,
+    bpm: clean($("bpm").value),
+    styleOptimization: $("styleOptimization").value
   };
   
   // Handle language selection
@@ -168,6 +278,9 @@ function buildPrompt(data) {
     ? `Use metatags no formato [Intro], [Verse], [Pre-Chorus], [Chorus], [Bridge], [Outro] (conforme fizer sentido).`
     : `Não use metatags explícitas; apenas descreva estrutura de forma natural.`;
 
+  // Generate optimized style
+  const style = generateOptimizedStyle(data);
+
   const soloLine = data.solo ? `Solo instrumental desejado: ${data.solo}.` : `Solo instrumental: (não especificado).`;
   const hookLine = data.hook ? `Hook/frase central sugerida: "${data.hook}".` : `Hook/frase central: (você deve criar uma).`;
 
@@ -205,8 +318,8 @@ BRIEF (respostas do usuário):
 REGRAS DE SAÍDA:
 - ${metatagsLine}
 - O resultado deve vir em 2 blocos:
-  A) STYLE (um parágrafo objetivo com gênero, vibe, timbres, andamento sugerido, voz, e referências "parecidas").
-  B) LYRICS (letra final pronta para cantar, seguindo a estrutura).
+  A) STYLE (formato otimizado para Suno - curto, denso, em inglês): ${style}
+  B) LYRICS (letra final pronta para cantar, seguindo a estrutura, com toda a narrativa e emoção).
 - Se o usuário deixou letra pronta, use-a. Se não, crie.
 - Não cite o nome do artista real diretamente no prompt final; use apenas a "referência similar" ou descrições.
 
@@ -333,6 +446,7 @@ $("reset").addEventListener("click", () => {
   $("chorusType").value = "Explosivo";
   $("pov").value = "1ª pessoa (eu)";
   $("wantMetatags").checked = true;
+  $("styleOptimization").value = "optimized";
   $("status").textContent = "";
   setOut("");
 });
